@@ -28,7 +28,12 @@ end
 require 'jopenssl.jar'
 
 if JRuby::Util.respond_to?(:load_ext) # JRuby 9.2
-  JRuby::Util.load_ext('org.jruby.ext.openssl.OpenSSL')
+  begin
+    JRuby::Util.load_ext('org.jruby.ext.openssl.OpenSSL')
+  rescue => e
+    # ignore non-serious failure on MacOS on initial launch of a native Mac app
+    puts e.full_message
+  end
 else; require 'jruby'
   org.jruby.ext.openssl.OpenSSL.load(JRuby.runtime)
 end
